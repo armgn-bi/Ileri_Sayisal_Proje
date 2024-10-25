@@ -28,8 +28,20 @@ module decode(
     output   [2:0]  mux_sel_o
     );
 
-    // verilen sinyali rv32i komutlarına göre çözümleyecek kod yazılacak
-    // çözümlenmiş sinyali oppcode res rd1 gibi şeylere ayırıp kaydedicek 
+    // rv32i için ayrılmış sinyaller
+    wire  [6:0]   opcode = instr_i[6:0];
+    wire  [4:0]   rd = instr_i[11:7];
+    wire  [2:0]   funct3 = instr_i[14:12];
+    wire  [4:0]   rs1 = instr_i[19:15];
+    wire  [11:0]  imm = instr_i[31:20];
+
+    // rv32r için ayrılmış sinyaller
+
+    wire  [4:0]   rs2 = instr_i[24:20];
+    wire  [6:0]   funct7 = instr_i[31:25];
+    
+    
+
 
     // 4 bit ALU kontrol sinyali    
     always @(*) begin
