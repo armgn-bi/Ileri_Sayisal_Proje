@@ -25,6 +25,7 @@ module chip(
         .instr_i(instr_i),
         .alu_ctrl_o(alu_ctrl_o),
         .mux_sel_o(mux_sel_o)
+        .alu_ctrl(funct3)
     );
 
 endmodule
@@ -56,19 +57,22 @@ endmodule
 
 module controller(
     input    [31:0] instr_i,
+    input    [3:0]  alu_ctrl,
     output   [3:0]  alu_ctrl_o,
     output   [2:0]  mux_sel_o
     );
 
     // 4 bit ALU kontrol sinyali    
     always @(*) begin
-        case(instr_i[31:28])
-            4'b0000 : alu_ctrl_o = 4'b0000;
-            4'b0001 : alu_ctrl_o = 4'b0001;
-            4'b0010 : alu_ctrl_o = 4'b0010;
-            4'b0011 : alu_ctrl_o = 4'b0011;
-            4'b0100 : alu_ctrl_o = 4'b0100;
-            4'b0101 : alu_ctrl_o = 4'b0101;
+        case(alu_ctrl[3:0])
+            3'b000 : alu_ctrl_o = 4'b0000;
+            3'b001 : alu_ctrl_o = 4'b0001;
+            3'b010 : alu_ctrl_o = 4'b0010;
+            3'b011 : alu_ctrl_o = 4'b0011;
+            3'b100 : alu_ctrl_o = 4'b0100;
+            3'b101 : alu_ctrl_o = 4'b0101;
+            3'b110 : alu_ctrl_o = 4'b0110;
+            3'b111 : alu_ctrl_o = 4'b0111;
             default : alu_ctrl_o = 4'bxxxx;
         endcase
         case(instr_i[27:25])
@@ -88,8 +92,15 @@ module alu(
     );
 
     always @(*) begin
-        case(alu_ctrl)
+        case(alu_ctrl)        
             4'b0000 : alu_o = reg_a + reg_b;
+            4'b0001 : alu_o = reg_a << imm[4:0];
+            4'b0010 : if (reg_a < reg_b) alu_o = 32'b1; else alu_o = 32'b0;
+            4'b0011 : if (reg_a < reg_b) alu_o = 32'b1; else alu_o = 32'b0;
+            4'b0100 : alu_o = reg_a ^ reg_b;
+            4'b0101 : alu_o = reg_a >> imm[4:0];
+            4'b0110 : alu_o = reg_a | reg_b;
+            4'b0111 : alu_o = reg_a & reg_b;
             default : alu_o = 32'b0;
         endcase    
     end
