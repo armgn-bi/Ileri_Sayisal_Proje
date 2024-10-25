@@ -5,13 +5,13 @@ module chip(
     output   [31:0] instr_o
     );
 
-    decode d1(
+    decode d1( //placeholder olarak yazdım içeriği değiştirilcek
         .instr_i(instr_i),
         .alu_ctrl_o(alu_ctrl),
         .mux_sel_o(mux_sel)
     );
 
-    alu a1(
+    alu a1( //placeholder olarak yazdım içeriği değiştirilcek
         .alu_i(alu_i),
         .alu_ctrl(alu_ctrl_o),
         .reg_a(reg_a),
@@ -19,7 +19,16 @@ module chip(
         .alu_o(alu_o)
     );
 
+    controller c1( //placeholder olarak yazdım içeriği değiştirilcek
+        .instr_i(instr_i),
+        .alu_ctrl_o(alu_ctrl_o),
+        .mux_sel_o(mux_sel_o)
+    );
+
 endmodule
+
+
+// Decode modülünde rv32i ve rv32r için ayrılmış sinyalleri controller müdülüne getirip orada yapılacak işlemin olacağı modüle sinyal gönderilecek.
 
 
 module decode(
@@ -40,8 +49,14 @@ module decode(
     wire  [4:0]   rs2 = instr_i[24:20];
     wire  [6:0]   funct7 = instr_i[31:25];
     
-    
+endmodule
 
+
+module controller(
+    input    [31:0] instr_i,
+    output   [3:0]  alu_ctrl_o,
+    output   [2:0]  mux_sel_o
+    );
 
     // 4 bit ALU kontrol sinyali    
     always @(*) begin
