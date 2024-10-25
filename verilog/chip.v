@@ -5,6 +5,8 @@ module chip(
     output   [31:0] instr_o
     );
 
+
+
     decode d1( //placeholder olarak yazdım içeriği değiştirilcek
         .instr_i(instr_i),
         .alu_ctrl_o(alu_ctrl),
@@ -13,7 +15,7 @@ module chip(
 
     alu a1( //placeholder olarak yazdım içeriği değiştirilcek
         .alu_i(alu_i),
-        .alu_ctrl(alu_ctrl_o),
+        .alu_ctrl(alu_ctrl_o), //decode modülünden gelen alu_ctrl_o sinyalini alu modülünün girişi olan alu_ctrl sinyaline bağladım.
         .reg_a(reg_a),
         .reg_b(reg_b),
         .alu_o(alu_o)
