@@ -5,7 +5,20 @@ module chip(
     output   [31:0] instr_o
     );
 
+    fetch f1 (
+      .clk_i(clk_i),
+      .rst_i(rst_i),
+      .pc_o(inst_o)
+    );
 
+    wire [31:0] fd2d_inst;
+
+    fd_regs r1 (
+      .clk_i(clk_i),
+      .rst_i(rst_i),
+      .inst_f_i(inst_addr_o),
+      .inst_d_o(inst_d_o)
+    );
 
     decode d1( //placeholder olarak yazdım içeriği değiştirilcek
         .instr_i(instr_i),
@@ -32,6 +45,46 @@ module chip(
         .mux_sel_o(mux_sel_o)
         .alu_ctrl(funct3)
     );
+
+    writeback w1( //placeholder olarak yazdım içeriği değiştirilcek
+        .alu_out_i(alu_o),
+        .result_o(result)
+    );
+
+endmodule
+
+
+module fetch (
+   input                clk_i,
+   input                rst_i,
+   output reg [31:0]    pc_o
+);
+
+   always @(posedge clk_i, posedge rst_i) begin
+      if (rst_i) begin // Sıfırlama sinyali geldiyse program sayacına başlangıç adresini ata
+         pc_o <= 32'h0000_0000;
+      end else begin // Saat sinyali geldiyse program sayacına 4 ekle
+         pc_o <= pc_o + 4;
+      end
+   end
+
+endmodule
+
+
+module fd_regs (
+   input                clk_i,
+   input                rst_i,
+   input [31:0]         inst_f_i, // Buyruk sinyali (bellekten geliyor)
+   output reg [31:0]    inst_d_o  // Boru hattı kaydedicisinin çıkışı 
+);
+
+   always @(posedge clk_i, posedge rst_i) begin
+      if (rst_i) begin
+         inst_d_o <= 32'b0;
+      end else begin
+         inst_d_o <= inst_f_i;
+      end
+   end
 
 endmodule
 
@@ -241,4 +294,13 @@ module alu(
             default : alu_o = 32'b0;
         endcase    
     end
+endmodule
+
+module writeback (
+   input  [31:0]              alu_out_i,
+   output [31:0]              result_o
+);
+
+   assign result_o = alu_out_i;
+   
 endmodule
