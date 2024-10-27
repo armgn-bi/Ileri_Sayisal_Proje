@@ -10,6 +10,7 @@ module chip(
     decode d1( //placeholder olarak yazdım içeriği değiştirilcek
         .instr_i(instr_i),
         .alu_ctrl_o(alu_ctrl),
+        .decode_ctrl_i(decode_ctrl_o),
         .mux_sel_o(mux_sel)
     );
 
@@ -36,12 +37,52 @@ endmodule
 
 module decode(
     input    [31:0] instr_i,
+    input    [3:0]  decode_ctrl_i,
     output   [3:0]  alu_ctrl_o,
     output   [2:0]  mux_sel_o
     );
 
+    always @(*) begin
+        case(decode_ctrl_i)
+            4'b0000 : begin
+                alu_ctrl_o = 4'b0000;
+                mux_sel_o = 3'b000;
+            end
+            4'b0001 : begin
+                alu_ctrl_o = 4'b0001;
+                mux_sel_o = 3'b000;
+            end
+            4'b0010 : begin
+                alu_ctrl_o = 4'b0010;
+                mux_sel_o = 3'b000;
+            end
+            4'b0011 : begin
+                alu_ctrl_o = 4'b0011;
+                mux_sel_o = 3'b000;
+            end
+            4'b0100 : begin
+                alu_ctrl_o = 4'b0100;
+                mux_sel_o = 3'b000;
+            end
+            4'b0101 : begin
+                alu_ctrl_o = 4'b0101;
+                mux_sel_o = 3'b000;
+            end
+            4'b0110 : begin
+                alu_ctrl_o = 4'b0110;
+                mux_sel_o = 3'b000;
+            end
+            4'b0111 : begin
+                alu_ctrl_o = 4'b0111;
+                mux_sel_o = 3'b000;
+            end
+            default : begin
+                alu_ctrl_o = 4'bxxxx;
+                mux_sel_o = 3'bxxx;
+            end
+        endcase
+    end
     // rv32i için ayrılmış sinyaller
-    wire  [6:0]   opcode = instr_i[6:0];
     wire  [4:0]   rd = instr_i[11:7];
     wire  [2:0]   funct3 = instr_i[14:12];
     wire  [4:0]   rs1 = instr_i[19:15];
@@ -59,8 +100,28 @@ module controller(
     input    [31:0] instr_i,
     input    [3:0]  alu_ctrl,
     output   [3:0]  alu_ctrl_o,
+    output   [3:0]  decode_ctrl_o,
     output   [2:0]  mux_sel_o
     );
+
+    wire  [6:0]   opcode = instr_i[6:0];
+
+    // gelen sinyalin opcode değerine göre decode bölümünden sinyalin nasıl ayrılması geretiğini belirleyen case yapısı.
+    always @(*) begin
+        case(opcode)
+            7'b0110011 : alu_ctrl_o = 4'b0000;  // R-Type (Register)
+            7'b0010011 : alu_ctrl_o = 4'b0001;  // I-Type (Immediate)
+            7'b0000011 : alu_ctrl_o = 4'b0010;  // I-Type (Load)
+            7'b0100011 : alu_ctrl_o = 4'b0011;  // S-Type (Store)
+            7'b1100011 : alu_ctrl_o = 4'b0100;  // B-Type (Branch)
+            7'b1101111 : alu_ctrl_o = 4'b0101;  // J-Type (Jump)          
+            7'b1100111 : alu_ctrl_o = 4'b0110;  // I-Type (Jump Register)
+            7'b0110111 : alu_ctrl_o = 4'b0111;  // U-Type (LUI)
+            7'b0010111 : alu_ctrl_o = 4'b1000;  // U-Type (AUIPC)
+            7'b1110011 : alu_ctrl_o = 4'b1001;  // I-Type (CSR)
+            default : alu_ctrl_o = 4'bxxxx;     // Default
+        endcase
+    end
 
     // 4 bit ALU kontrol sinyali    
     always @(*) begin
