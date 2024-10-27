@@ -53,6 +53,7 @@ module chip(
 
 endmodule
 
+// moduller arası bağlantı yapılacak ve chip ile memory arasında bağlantı yapılacak.
 
 module fetch (
    input                clk_i,
