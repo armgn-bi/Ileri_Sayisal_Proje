@@ -218,7 +218,7 @@ module controller(
             end
             7'b0110111 : begin // U-Type (LUI)
                 alu_r = 1'b0;
-                decode_ctrl_o = 4'b0117;
+                decode_ctrl_o = 4'b0111;
             end
             7'b0010111 : begin // U-Type (AUIPC)
                 alu_r = 1'b0;
