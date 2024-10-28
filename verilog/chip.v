@@ -16,7 +16,7 @@ module chip(
     fd_regs r1 (
       .clk_i(clk_i),
       .rst_i(rst_i),
-      .inst_f_i(inst_addr_o),
+      .inst_f_i(inst_o),
       .inst_d_o(inst_d_o)
     );
 
@@ -264,8 +264,8 @@ module alu(
     output     [31:0] alu_o
     );
 
-    wire  [6:0]   reg_a = res_i;
-    wire  [6:0]   reg_b = alu_i[24:20];
+    assign   reg_a = rs1_i;
+    assign   reg_b = alu_r ? rs2_i : imm_i;
 
     // alu girişini reg_a gibi değerlere ata
     // r ve i type veri için or tarzı bir şeyle atama yapsın
@@ -289,7 +289,15 @@ module alu(
             4'b0010 : if (reg_a < reg_b) alu_o = 32'b1; else alu_o = 32'b0;
             4'b0011 : if (reg_a < reg_b) alu_o = 32'b1; else alu_o = 32'b0;
             4'b0100 : alu_o = reg_a ^ reg_b;
-            4'b0101 : alu_o = reg_a >> imm[4:0];
+            4'b0101 : begin
+                    always @(*) begin                        
+                        if(funct7 == 7'b0100000) begin
+                            alu_o = reg_a >>> imm[4:0];
+                        end else begin
+                            alu_o = reg_a >> imm[4:0];
+                        end                                
+                    end
+            end
             4'b0110 : alu_o = reg_a | reg_b;
             4'b0111 : alu_o = reg_a & reg_b;
             default : alu_o = 32'b0;

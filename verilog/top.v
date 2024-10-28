@@ -6,21 +6,26 @@ module top (
 );
 
     // Internal signals
-    wire [7:0] internal_signal;
+    wire [31:0] inst;
+    wire [31:0] inst_addr;
 
     // Instantiate sub-modules
-    chip u1 (
+    chip c1 (
         .clk_i(clk),
         .res_i(reset),
+        .inst_i(inst),
+        .inst_addr_o(inst_addr)
         .data_in(data_in),
         .data_out(internal_signal)
     );
 
-    memory u2 (
+    memory m1 (
         .clk_i(clk),
         .reset(reset),
-        .data_in(internal_signal),
-        .data_out(data_out)
+        .wen_i(1'b0),
+        .addr_i(inst_addr),
+        .data_i(32'b0),
+        .data_out(inst)
     );
 
 endmodule
