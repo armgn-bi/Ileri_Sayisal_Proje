@@ -7,7 +7,7 @@ module chip(
 
     fetch f1 (
       .clk_i(clk_i),
-      .rst_i(rst_i),
+      .rst_i(res_i),
       .pc_o(inst_o)
     );
 
@@ -15,10 +15,12 @@ module chip(
 
     fd_regs r1 (
       .clk_i(clk_i),
-      .rst_i(rst_i),
-      .inst_f_i(inst_o),
-      .inst_d_o(inst_d_o)
+      .rst_i(res_i),
+      .inst_f_i(inst_i),
+      .inst_d_o(fd2d_inst)
     );
+
+    // modüller arası kablolar eklenip aşağıda bağlantılar yapılacak.
 
     decode d1( //placeholder olarak yazdım içeriği değiştirilcek
         .instr_i(instr_i),
