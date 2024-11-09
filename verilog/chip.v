@@ -315,3 +315,5 @@ module writeback (
    assign result_o = alu_out_i;
    
 endmodule
+
+// deneme
