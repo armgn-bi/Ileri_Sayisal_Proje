@@ -1,4 +1,4 @@
-module fetch (
+module cpu_fetch (
    input                clk_i,  
    input                rst_i,        // reset
    output reg [31:0]    pc_o          // 32 bit program sayaç çıkışı
